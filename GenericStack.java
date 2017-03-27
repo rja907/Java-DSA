@@ -1,4 +1,4 @@
-package stackProblems;
+package helperClasses;
 
 public class GenericStack<T> {
 

@@ -1,9 +1,6 @@
-package queueProblems;
+package helperClasses;
 
-import shared.IQueue;
-
-
-public class GenericQueue<T> implements IQueue<T> {
+public class GenericQueue<T> {
 	private T[] data;
 	private int front;
 	private int size;
