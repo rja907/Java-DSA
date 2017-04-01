@@ -1,7 +1,8 @@
-package helperClasses;
+package shared;
 
-public class LinkedList<T extends Comparable<T>> {
-	private class Node implements Comparable<Node>
+
+public class LinkedList<T> {
+	private class Node
 	{
 		T data;
 		Node next;
@@ -15,10 +16,6 @@ public class LinkedList<T extends Comparable<T>> {
 		public String toString()
 		{
 			return this.data.toString();
-		}
-		
-		public int compareTo(Node other){
-			return this.data.compareTo(other.data);
 		}
 	}
 
@@ -34,9 +31,9 @@ public class LinkedList<T extends Comparable<T>> {
 		this.tail = null;
 		this.size = 0;
 	}
-
+	
 	//Helpers
-	private boolean isEmpty()
+	public boolean isEmpty()
 	{
 		return this.size == 0;
 	}
@@ -44,7 +41,7 @@ public class LinkedList<T extends Comparable<T>> {
 	{
 		return this.size;
 	}
-
+	
 	//Insertion in linked list
 	public void addLast(T value)
 	{
@@ -98,15 +95,46 @@ public class LinkedList<T extends Comparable<T>> {
 			this.size++;
 		}
 	}
+	public void insertionRecursiveAtI(T value, int index)
+	{
+		if(index < 0 || index >= this.size)
+		{
+			//throw some error
+			System.out.println("Invalid index!");
+		}
+		else if(index == 0)
+		{
+			this.addFirst(value);
+		}
+		else if(index == this.size)
+		{
+			this.addLast(value);
+		}
+		else
+		{
+			insertionRecursiveHelper(this.head, index, value);
+		}
+	}
+	private void insertionRecursiveHelper(Node start, int index, T value)
+	{
+		if(index == 1)
+		{
+			Node newNode = new Node(value,start.next);
+			start.next = newNode;
+			this.size++;
+			return;
+		}
+		insertionRecursiveHelper(start.next, index - 1, value);
+	}
 	
 	//Deletion in Linked List
-	public void deleteFirst()
+	public T deleteFirst() throws Exception
 	{
 		if(this.isEmpty())
 		{
-			//Nothing to delete
-			return;
+			throw new Exception("List is empty");
 		}
+		T retVal = this.head.data;
 		Node newHead = this.head.next;
 		this.head = newHead;
 		this.size--;
@@ -114,6 +142,7 @@ public class LinkedList<T extends Comparable<T>> {
 		{
 			this.tail = null;
 		}
+		return retVal;
 	}
 	public void deleteLast()
 	{
@@ -124,7 +153,7 @@ public class LinkedList<T extends Comparable<T>> {
 		}
 		else if(this.size == 1)
 		{
-			deleteFirst();
+			//deleteFirst();
 		}
 		else
 		{
@@ -142,7 +171,7 @@ public class LinkedList<T extends Comparable<T>> {
 	{
 		if(index == 0)
 		{
-			deleteFirst();
+		//deleteFirst();
 		}
 		else if(index == this.size - 1)
 		{
@@ -163,6 +192,35 @@ public class LinkedList<T extends Comparable<T>> {
 			this.size--;
 		}
 	}
+	public void deletionRecursiveAtI(int index)
+	{
+		if(index < 0 || index >= this.size)
+		{
+			System.out.println("Invalid index!");
+		}
+		else if(index == 0)
+		{
+			//this.deleteFirst();
+		}
+		else if(index == this.size - 1)
+		{
+			this.deleteLast();
+		}
+		else
+		{
+			deletionRecursiveHelper(this.head, index);
+		}
+	}
+	private void deletionRecursiveHelper(Node start, int index)
+	{
+		if(index == 1)
+		{
+			start.next = start.next.next;
+			this.size--;
+			return;
+		}
+		deletionRecursiveHelper(start.next, index - 1);
+	}
 	
 	//Print a linked list
 	public String toString()
@@ -171,17 +229,17 @@ public class LinkedList<T extends Comparable<T>> {
 		if(isEmpty())
 		{
 			retVal += "List is Empty";
+			retVal += "\n";
 		}
 		else
 		{
-			retVal += "Linked List : ";
 			Node temp = this.head;
 			while(temp != null)
 			{
 				retVal += temp.data + " ";
 				temp = temp.next;
 			}
-			retVal += "END";
+			retVal += "END \n";
 		}
 		return retVal;
 	}
@@ -205,6 +263,64 @@ public class LinkedList<T extends Comparable<T>> {
 			System.out.println(index+"ith element : "+ temp.data);
 		}
 	}
+
+	//Find an element
+	public int find(T value) throws Exception
+	{
+		if(this.isEmpty())
+		{
+			throw new Exception("List is empty");
+		}
+		else
+		{
+			return findHelper(this.head, value, 0);
+		}
+	}
+	private int findHelper(Node node, T value, int index)
+	{
+		if(node == null)
+		{
+			return -1;
+		}
+		if(node.data.equals(value))
+		{
+			return index;
+		}
+		else
+		{
+			return findHelper(node.next, value, index + 1);
+		}
+	}
+	
+	public T getElementAt(int idx) {
+		return this.getNodeAt(idx).data;
+	}
+
+	private Node getNodeAt(int idx) {
+		if (this.isEmpty()) {
+			throw new RuntimeException("The list is empty");
+		}
+
+		if (idx < 0 || idx >= this.getSize()) {
+			throw new RuntimeException("Argument is invalid");
+		}
+
+		if (idx == 0) {
+			return this.head;
+		} else if (idx == this.getSize() - 1) {
+			return this.tail;
+		} else {
+			int counter = 0;
+			Node temp = this.head;
+
+			while (counter < idx) {
+				counter++;
+				temp = temp.next;
+			}
+
+			return temp;
+		}
+	}
+
+
 }
-
-
