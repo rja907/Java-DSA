@@ -1,87 +1,109 @@
 package classDemos;
 
-import java.util.Comparator;
-
-class Car implements Comparable<Car>
-{
-	int price;
-	int speed;
-	Car(int p, int s)
-	{
-		price = p;
-		speed = s;
-	}
-	public String toString()
-	{
-		return "Price : "+price + " Speed : " +speed;
-	}
-	
-	public int compareTo(Car o) {
-		return this.price - o.price;
-	}
-}
-
-class Car2
-{
-	int price;
-	int speed;
-	Car2(int p, int s)
-	{
-		price = p;
-		speed = s;
-	}
-	public String toString()
-	{
-		return "Price : "+price + " Speed : " +speed;
-	}
-}
-
-class PriceComparator implements Comparator<Car2>
-{
-	public int compare(Car2 o1, Car2 o2) {
-		return o1.price - o2.price;
-	}
-	
-}
-class SpeedComparator implements Comparator<Car2>
-{
-	public int compare(Car2 o1, Car2 o2) {
-		return o1.speed - o2.speed;
-	}
-}
+import java.util.HashMap;
 
 public class Sample {
-	public static void main(String[] args)
+
+	public static String appendTest(int n)
 	{
-		//Cars can only be compared according to price now. 
-		//If we want cars to be compared on some other criteria, we will have to modify compareTo function 
-		Car c1 = new Car(10000, 200);
-		Car c2 = new Car(20000, 100);
-		if(c1.compareTo(c2) > 0)
+		String retVal = "";
+		long start = System.currentTimeMillis();
+		for(int i = 1; i <= n; i++)
 		{
-		//	System.out.println(c1 + " is greater");
+			retVal += "Hi";
 		}
-		else
-		{
-	//		System.out.println(c2 + " is greater");
-		}
-		Car2 c3 = new Car2(10000, 200);
-		Car2 c4 = new Car2(20000, 100);
-		if(new SpeedComparator().compare(c3, c4) > 0)
-		{
-			System.out.println(c1 + " is greater");
-		}
-		else
-		{
-			System.out.println(c2 + " is greater");
-		}
-		if(new PriceComparator().compare(c3, c4) > 0)
-		{
-			System.out.println(c1 + " is greater");
-		}
-		else
-		{
-			System.out.println(c2 + " is greater");
-		}
+		long end = System.currentTimeMillis();
+		System.out.println("String time : " + (end - start));
+		return retVal;
 	}
-}	
+	public static String appendTestFaster(int n)
+	{
+		StringBuffer sb = new StringBuffer();
+		long start = System.currentTimeMillis();
+		for(int i = 1; i <= n; i++)
+		{
+			sb.append("Hi");
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("String Buffer time : " + (end - start));
+		return sb.toString();
+	}
+	public static int boyerMoorePatternMatching(String str, String pattern)
+	{
+		int index = -1;
+		HashMap<Character, Integer> patternMap = new HashMap<>();
+		int n = str.length();
+		int m = pattern.length();
+		int i = 0;
+		for(int j = 0; j < m; j++)
+		{
+			patternMap.put(pattern.charAt(j), j);
+		}
+		while(i < n - m)
+		{
+			int j = m - 1;
+			while(j >= 0)
+			{
+				if(str.charAt(i + j) != pattern.charAt(j))
+				{
+					Character mismatch = str.charAt(i + j); 
+					if(!patternMap.containsKey(mismatch))
+					{
+						i = i + j + 1;
+					}
+					else
+					{
+						int psi = patternMap.get(mismatch);
+						if (j > psi) {
+							i = i + j - psi;
+						} else {
+							i = i + 1;
+						}
+					}
+					break;
+				}
+				j--;
+			}
+			if(j == -1)
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	public static int bruteForcePatternMatching(String str, String pattern)
+	{
+		int i = 0;
+		int n = str.length();
+		int p = pattern.length();
+		int retVal = -1;
+		while(i < n - p)
+		{
+			int j = 0;
+			while(j < p)
+			{
+				if(str.charAt(i + j) != pattern.charAt(j))
+				{
+					break;
+				}
+				j++;
+			}
+			if(j == p)
+			{
+				retVal = i;
+				break; 
+			}
+			i++;
+		}
+		
+		return retVal;
+	}
+	public static void main(String[] args) {
+		appendTestFaster(100000);
+		appendTest(100000);
+		
+		//System.out.println(bruteForcePatternMatching("abcdabc","dab"));
+	}
+
+}
